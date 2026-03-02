@@ -1,10 +1,9 @@
-version: '3.8'
-
 services:
   mlflow:
-    image: bitnami/mlflow:2
+    image: ghcr.io/mlflow/mlflow:latest
+    command: mlflow server --host 0.0.0.0 --backend-store-uri sqlite:////tmp/mlflow.db
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - MLFLOW_TRACKING_URI=sqlite:////tmp/mlflow.db
     volumes:

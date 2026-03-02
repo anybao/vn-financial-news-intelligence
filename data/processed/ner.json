@@ -1,0 +1,5 @@
+{"tokens": ["Cổ", "phiếu", "FPT", "tăng", "mạnh", "."], "ner_tags": [0, 0, 1, 0, 0, 0]}
+{"tokens": ["Vietcombank", "công", "bố", "lợi", "nhuận", "."], "ner_tags": [1, 0, 0, 0, 0, 0]}
+{"tokens": ["Thị", "trường", "chứng", "khoán", "lao", "dốc", "."], "ner_tags": [0, 0, 0, 0, 0, 0, 0]}
+{"tokens": ["Ông", "lớn", "ngành", "BĐS", "như", "VIC", "điều", "chỉnh", "nhẹ", "."], "ner_tags": [0, 0, 0, 0, 0, 1, 0, 0, 0, 0]}
+{"tokens": ["Cổ", "phiếu", "VNM", "có", "dấu", "hiệu", "hồi", "phục", "."], "ner_tags": [0, 0, 1, 0, 0, 0, 0, 0, 0]}

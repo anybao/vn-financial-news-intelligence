@@ -13,29 +13,54 @@ The backend API is served by FastAPI and heavily monitored utilizing a full MLOp
 ## Getting Started
 
 ### Prerequisites
-- Python 3.10+
-- Docker and Docker Compose
+- Python 3.10 to 3.13 (Python 3.14 unsupported for some Rust bindings)
+- Docker and Docker Compose (Optional, for MLOps stack)
 
-### Application Setup
+### 🚀 Running the System
 
-1. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+The easiest way to spin up the entire system (MLOps containers, Python Virtual Environment, Data Ingestion Scheduler, and FastAPI Server) is using the provided bash script:
 
-2. **Start MLOps Services (MLFlow, Prometheus, Grafana)**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Start the FastAPI Server**
-   ```bash
-   uvicorn src.api.main:app --reload
-   ```
-
-### Running Tests
 ```bash
-pytest tests/
+chmod +x start_all.sh
+./start_all.sh
+```
+
+### 💡 Using the API
+
+Once the system is running (available on `localhost:8000`), you can interact with it in several ways:
+
+#### 1. Live NLP Dashboard
+Navigate to your auto-updating AI Dashboard: **[http://localhost:8000/api/v1/dashboard](http://localhost:8000/api/v1/dashboard)** (The home directory `/` automatically redirects here!)
+
+#### 2. Interactive API Docs (Swagger UI)
+Open your browser and navigate to: **[http://localhost:8000/docs](http://localhost:8000/docs)**.
+You can click on the `POST /api/v1/predict_event` endpoint, click **"Try it out"**, enter a test sentence, and hit Execute.
+
+#### 2. Test via Terminal (cURL)
+You can send a test financial article directly from your terminal to see the NLP pipelines in action (Summarization + Sentiment + NER all at once):
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8000/api/v1/predict_event' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "text": "Cổ phiếu FPT tăng mạnh sau báo cáo tài chính tích cực trong quý 3."
+}'
+```
+
+#### 3. View MLOps Metrics
+- **API Performance:** You can view real-time request counts and latencies at **[http://localhost:8000/metrics](http://localhost:8000/metrics)**.
+- **MLflow Tracking:** Access the MLflow dashboard for training runs at **[http://localhost:5000](http://localhost:5000)**.
+
+### 🧠 Training the Models
+
+To train the models on your own datasets, replace `data/processed/sentiment.csv` and `data/processed/ner.json` with your annotated datasets, then run the training scripts:
+
+```bash
+source venv/bin/activate
+python src/sentiment/train_sentiment.py
+python src/ner/train_ner.py
 ```
 
 ## Directory Structure

@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from src.api.routes import router as api_router
 from mlops.prometheus_metrics import prometheus_middleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -21,6 +22,11 @@ def create_app() -> FastAPI:
     # Mount prometheus metrics endpoint
     metrics_app = make_asgi_app()
     app.mount("/metrics", metrics_app)
+
+    @app.get("/", include_in_schema=False)
+    async def root_redirect():
+        """Redirects root to the Dashboard"""
+        return RedirectResponse(url="/api/v1/dashboard")
 
     return app
 

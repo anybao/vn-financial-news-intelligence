@@ -3,7 +3,7 @@ import os
 
 def setup_mlflow():
     """Initialize MLflow tracking URI."""
-    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5001")
     mlflow.set_tracking_uri(tracking_uri)
 
 def log_experiment_parameters(params: dict):

@@ -19,7 +19,7 @@ class BeamSearchNode:
     def __lt__(self, other):
         return self.eval() < other.eval()
 
-def decode_beam_search(decoder, encoder_outputs, encoder_hidden, encoder_cell, sos_idx, eos_idx, max_len, beam_width, device):
+def decode_beam_search(decoder, encoder_outputs, encoder_hidden, encoder_cell, sos_idx, eos_idx, max_len, beam_width, device, min_len=5):
     """
     Performs beam search decoding for a single batch element.
     Normally, this would be optimized for batched processing, but loop-based is standard for educational baselines.
@@ -41,7 +41,9 @@ def decode_beam_search(decoder, encoder_outputs, encoder_hidden, encoder_cell, s
         score, n = nodes.get()
         
         if n.wordid == eos_idx and n.prevNode != None:
-            end_nodes.append((score, n))
+            # Enforce length control (min_length)
+            if n.leng >= min_len:
+                end_nodes.append((score, n))
             if len(end_nodes) >= beam_width:
                 break
             continue

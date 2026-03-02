@@ -1,0 +1,49 @@
+2026-03-01 17:44:38,060 - __main__ - INFO - Initializing Summarization Module (Pre-Main)...
+ENTRY: Starting Summarizer Models execution block...
+2026-03-01 17:44:38,061 - __main__ - INFO - Initializing Summarizer Models...
+2026-03-01 17:44:38,837 - __main__ - INFO - Summarization model initialized.
+2026-03-01 17:44:43,550 - __main__ - INFO - Loading `OpenHust/vietnamese-summarization` Dataset from HuggingFace...
+2026-03-01 17:44:43,855 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/OpenHust/vietnamese-summarization/resolve/main/README.md "HTTP/1.1 307 Temporary Redirect"
+2026-03-01 17:44:43,866 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/datasets/OpenHust/vietnamese-summarization/c62ecacab1734ddeda45814650ea62468b63833a/README.md "HTTP/1.1 200 OK"
+2026-03-01 17:44:44,128 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/OpenHust/vietnamese-summarization/resolve/c62ecacab1734ddeda45814650ea62468b63833a/vietnamese-summarization.py "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:45,006 - httpx - INFO - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/OpenHust/vietnamese-summarization/OpenHust/vietnamese-summarization.py "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:45,267 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/datasets/OpenHust/vietnamese-summarization/revision/c62ecacab1734ddeda45814650ea62468b63833a "HTTP/1.1 200 OK"
+2026-03-01 17:44:45,526 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/OpenHust/vietnamese-summarization/resolve/c62ecacab1734ddeda45814650ea62468b63833a/.huggingface.yaml "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:45,963 - httpx - INFO - HTTP Request: GET https://datasets-server.huggingface.co/info?dataset=OpenHust/vietnamese-summarization "HTTP/1.1 200 OK"
+2026-03-01 17:44:46,226 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/datasets/OpenHust/vietnamese-summarization/tree/c62ecacab1734ddeda45814650ea62468b63833a/data?recursive=true&expand=false "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:46,505 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/datasets/OpenHust/vietnamese-summarization/tree/c62ecacab1734ddeda45814650ea62468b63833a?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-03-01 17:44:46,817 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/OpenHust/vietnamese-summarization/resolve/c62ecacab1734ddeda45814650ea62468b63833a/dataset_infos.json "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:47,365 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/OpenHust/vietnamese-summarization/resolve/main/README.md "HTTP/1.1 307 Temporary Redirect"
+2026-03-01 17:44:47,375 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/datasets/OpenHust/vietnamese-summarization/c62ecacab1734ddeda45814650ea62468b63833a/README.md "HTTP/1.1 200 OK"
+2026-03-01 17:44:47,639 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/OpenHust/vietnamese-summarization/resolve/c62ecacab1734ddeda45814650ea62468b63833a/vietnamese-summarization.py "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:47,911 - httpx - INFO - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/OpenHust/vietnamese-summarization/OpenHust/vietnamese-summarization.py "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:48,172 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/OpenHust/vietnamese-summarization/resolve/c62ecacab1734ddeda45814650ea62468b63833a/.huggingface.yaml "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:48,469 - httpx - INFO - HTTP Request: GET https://datasets-server.huggingface.co/info?dataset=OpenHust/vietnamese-summarization "HTTP/1.1 200 OK"
+2026-03-01 17:44:48,728 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/datasets/OpenHust/vietnamese-summarization/tree/c62ecacab1734ddeda45814650ea62468b63833a/data?recursive=true&expand=false "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:48,991 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/datasets/OpenHust/vietnamese-summarization/resolve/c62ecacab1734ddeda45814650ea62468b63833a/dataset_infos.json "HTTP/1.1 404 Not Found"
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-01 17:44:48,992 - huggingface_hub.utils._http - WARNING - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-03-01 17:44:49,275 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/vinai/phobert-base/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-01 17:44:49,284 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/vinai/phobert-base/c1e37c5c86f918761049cef6fa216b4779d0d01d/config.json "HTTP/1.1 200 OK"
+2026-03-01 17:44:49,545 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/vinai/phobert-base/resolve/main/tokenizer_config.json "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:49,806 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/vinai/phobert-base/resolve/main/tokenizer_config.json "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:50,059 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/vinai/phobert-base/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-01 17:44:50,326 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/vinai/phobert-base/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-01 17:44:50,582 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/vinai/phobert-base/resolve/main/vocab.txt "HTTP/1.1 307 Temporary Redirect"
+2026-03-01 17:44:50,590 - httpx - INFO - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/vinai/phobert-base/c1e37c5c86f918761049cef6fa216b4779d0d01d/vocab.txt "HTTP/1.1 200 OK"
+2026-03-01 17:44:50,705 - __main__ - INFO - Mapping tokenization over datasets...
+Map:   0%|          | 0/500 [00:00<?, ? examples/s]Map: 100%|██████████| 500/500 [00:00<00:00, 530.98 examples/s]Map: 100%|██████████| 500/500 [00:00<00:00, 529.72 examples/s]
+Map:   0%|          | 0/50 [00:00<?, ? examples/s]Map: 100%|██████████| 50/50 [00:00<00:00, 424.91 examples/s]Map: 100%|██████████| 50/50 [00:00<00:00, 418.68 examples/s]
+2026-03-01 17:44:53,294 - __main__ - INFO - Initializing DataLoaders...
+2026-03-01 17:44:53,295 - __main__ - ERROR - Failed to load real dataset: 'Column' object has no attribute 'size'
+Traceback (most recent call last):
+  File "/Users/quanghuy/Documents/MSE/NLP501/FinalProject-NLP/src/summarization/train.py", line 145, in <module>
+    TensorDataset(dataset["src_ids"], dataset["trg_ids"]),
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/quanghuy/Documents/MSE/NLP501/FinalProject-NLP/venv/lib/python3.13/site-packages/torch/utils/data/dataset.py", line 201, in __init__
+    if all(tensors[0].size(0) != tensor.size(0) for tensor in tensors):
+       ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/quanghuy/Documents/MSE/NLP501/FinalProject-NLP/venv/lib/python3.13/site-packages/torch/utils/data/dataset.py", line 201, in <genexpr>
+    if all(tensors[0].size(0) != tensor.size(0) for tensor in tensors):
+           ^^^^^^^^^^^^^^^
+AttributeError: 'Column' object has no attribute 'size'

@@ -18,6 +18,20 @@ else
 fi
 
 echo ""
+echo "Setting up Python virtual environment with Python 3.13..."
+if [ ! -d "venv" ]; then
+    if command -v python3.13 >/dev/null 2>&1; then
+        python3.13 -m venv venv
+    elif command -v python3.12 >/dev/null 2>&1; then
+        python3.12 -m venv venv
+    else
+        python3 -m venv venv
+    fi
+fi
+source venv/bin/activate
+pip install -r requirements.txt
+
+echo ""
 echo "[2/3] Starting Data Ingestion Scheduler in the background..."
 # Run the scheduler in the background
 python src/ingestion/scheduler.py > scheduler.log 2>&1 &
@@ -53,4 +67,4 @@ echo "Press Ctrl+C to stop all systems."
 echo ""
 
 # Run FastAPI with uvicorn in the foreground
-uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000
