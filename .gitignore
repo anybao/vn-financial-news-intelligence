@@ -1,0 +1,5 @@
+# Ignore all files in the models directory
+models/*
+
+# Except for the .gitkeep file (which keeps the directory in git)
+!models/.gitkeep
