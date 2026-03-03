@@ -170,11 +170,12 @@ async def get_articles(db: Session = Depends(get_db)):
         stocks = [s for s in a.stocks.split(",") if s] if a.stocks else []
         nlp_summary = a.nlp_summary if a.nlp_summary else None
 
-        # On-the-fly fallback: extract stocks if missing
-        text_for_nlp = f"{a.title}. {a.raw_summary or ''}"
+        # On-the-fly fallback: use raw_summary for NLP (not title, to avoid title leaking into summary)
+        text_for_nlp = a.raw_summary or a.title or ''
+        text_for_ner = f"{a.title}. {a.raw_summary or ''}"
         if not stocks:
             try:
-                stocks_res = ner_predictor.extract_stocks(text_for_nlp)
+                stocks_res = ner_predictor.extract_stocks(text_for_ner)
                 stocks = stocks_res.get("stocks", [])
                 if stocks:
                     a.stocks = ",".join(stocks)
@@ -213,6 +214,7 @@ async def get_articles(db: Session = Depends(get_db)):
             "link": a.link,
             "published": a.published,
             "source": a.source,
+            "raw_summary": _clean_entities(a.raw_summary or ""),
             "nlp_summary": display_summary,
             "sentiment": sentiment,
             "stocks": stocks

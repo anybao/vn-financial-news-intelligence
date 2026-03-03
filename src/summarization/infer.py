@@ -23,7 +23,7 @@ def _clean_html_entities(text: str) -> str:
     return text
 
 
-def _extractive_summarize(text: str, max_sentences: int = 3) -> str:
+def _extractive_summarize(text: str, max_sentences: int = 3, exclude_title: str = None) -> str:
     """
     Simple extractive summarization fallback.
     Picks the top-N sentences by a basic importance score (length + position bias).
@@ -32,6 +32,11 @@ def _extractive_summarize(text: str, max_sentences: int = 3) -> str:
     # Split into sentences using Vietnamese/general punctuation
     sentences = re.split(r'(?<=[.!?。])\s+', text.strip())
     sentences = [s.strip() for s in sentences if len(s.strip()) > 15]
+
+    # Filter out sentences that are just the title repeated
+    if exclude_title:
+        title_norm = exclude_title.strip().rstrip('.!?').lower()
+        sentences = [s for s in sentences if s.strip().rstrip('.!?').lower() != title_norm]
 
     if not sentences:
         return _clean_html_entities(text[:200].strip()) if len(text) > 200 else _clean_html_entities(text.strip())

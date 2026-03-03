@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # Example usage
     sample_feeds = [
         "https://vnexpress.net/rss/kinh-doanh.rss",
-        "https://cafef.vn/trang-chu.rss"
+        "https://vneconomy.vn/chung-khoan.rss"
     ]
     scraper = RSSScraper(sample_feeds)
     data = scraper.scrape()

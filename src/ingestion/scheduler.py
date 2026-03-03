@@ -32,8 +32,8 @@ def save_articles(articles):
                 "is_duplicate": False
             }
             try:
-                # Text for NLP is usually title + summary
-                text_to_process = f"{article_data['title']}. {article_data['summary']}"
+                # Use raw summary for NLP; title is stored separately
+                text_to_process = article_data['summary'] or article_data['title']
                 res = requests.post("http://localhost:8000/api/v1/predict_event", json={"text": text_to_process}, timeout=10)
                 if res.status_code == 200:
                     nlp_res = res.json()
@@ -73,7 +73,7 @@ def run_ingestion_job():
     
     feeds = [
         "https://vnexpress.net/rss/kinh-doanh.rss",
-        "https://vneconomy.vn/rss.rss"
+        "https://vneconomy.vn/chung-khoan.rss"
     ]
     
     try:

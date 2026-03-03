@@ -32,6 +32,8 @@ Once the system is running (available on `localhost:8000`), you can interact wit
 #### 1. Live NLP Dashboard
 Navigate to your auto-updating AI Dashboard: **[http://localhost:8000/api/v1/dashboard](http://localhost:8000/api/v1/dashboard)** (The home directory `/` automatically redirects here!)
 
+![Dashboard Screenshot](screenshot.png)
+
 #### 2. Interactive API Docs (Swagger UI)
 Open your browser and navigate to: **[http://localhost:8000/docs](http://localhost:8000/docs)**.
 You can click on the `POST /api/v1/predict_event` endpoint, click **"Try it out"**, enter a test sentence, and hit Execute.
@@ -71,7 +73,21 @@ curl -X 'POST' \
 | **Prometheus** | [http://localhost:9090](http://localhost:9090) | Metrics collection |
 | **Grafana** | [http://localhost:3000](http://localhost:3000) | Monitoring dashboards (admin/admin) |
 
-### 🧠 Training the Models
+### � Generating Fake Data
+
+To test the full NLP pipeline without waiting for real RSS articles, you can generate synthetic Vietnamese financial news:
+
+```bash
+source venv/bin/activate
+export PYTHONPATH=$(pwd)
+python scripts/generate_fake_data.py --count 10
+```
+
+This creates realistic articles with randomized stock tickers, financial figures, and sentiment, then pushes them through the same ingestion pipeline (Summarization + Sentiment + NER) as real data. Each run also saves the original generated data to a timestamped log file in `logs/fake_data/`.
+
+> **Note:** The API server must be running (`localhost:8000`) for the NLP processing to work.
+
+### �🧠 Training the Models
 
 To train the models on your own datasets, replace `data/processed/sentiment.csv` and `data/processed/ner.json` with your annotated datasets, then run the training scripts:
 
