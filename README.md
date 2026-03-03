@@ -1,5 +1,7 @@
 # Financial News Intelligence (NLP501 Final Project)
 
+![Dashboard Screenshot](screenshot.png)
+
 This project is an End-to-End NLP System for Financial News, developed for the NLP501 Final Project.
 It features Abstractive Summarization, Sentiment Analysis, Stock Mapping (NER), and Semantic Deduplication.
 The backend API is served by FastAPI and heavily monitored utilizing a full MLOps stack.
@@ -32,7 +34,6 @@ Once the system is running (available on `localhost:8000`), you can interact wit
 #### 1. Live NLP Dashboard
 Navigate to your auto-updating AI Dashboard: **[http://localhost:8000/api/v1/dashboard](http://localhost:8000/api/v1/dashboard)** (The home directory `/` automatically redirects here!)
 
-![Dashboard Screenshot](screenshot.png)
 
 #### 2. Interactive API Docs (Swagger UI)
 Open your browser and navigate to: **[http://localhost:8000/docs](http://localhost:8000/docs)**.
