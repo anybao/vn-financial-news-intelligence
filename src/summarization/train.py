@@ -5,6 +5,7 @@ from src.summarization.encoder import EncoderBiLSTM
 from src.summarization.decoder import AttnDecoderLSTM
 import logging
 import sys
+import os
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -215,8 +216,40 @@ if __name__ == "__main__":
                     mlflow.log_metric("val_bleu", scores.get("sacrebleu", 0), step=epoch)
                     logger.info(f"Validation Scores - ROUGE-L: {scores.get('rougeL', 0):.4f} | BLEU: {scores.get('sacrebleu', 0):.4f}")
                 
+            # Save the trained model to disk
+            os.makedirs("models/summarizer", exist_ok=True)
+            torch.save(model.state_dict(), "models/summarizer/summarizer.pt")
+            logger.info("Saved summarization model to models/summarizer/summarizer.pt")
+
+            # Register to MLflow Model Registry
+            logger.info("Registering SummarizationModel to MLflow Model Registry...")
+            import mlflow.pytorch
+            info = mlflow.pytorch.log_model(
+                pytorch_model=model,
+                artifact_path="model",
+                registered_model_name="SummarizationModel",
+            )
+            logger.info(f"Registered SummarizationModel: {info.model_uri}")
+
+        # Transition to Production
+        from mlflow.tracking import MlflowClient
+        client = MlflowClient()
+        try:
+            versions = client.get_latest_versions("SummarizationModel")
+            if versions:
+                client.transition_model_version_stage(
+                    name="SummarizationModel",
+                    version=versions[-1].version,
+                    stage="Production",
+                    archive_existing_versions=True,
+                )
+                logger.info(f"SummarizationModel v{versions[-1].version} → Production")
+        except Exception as e:
+            logger.warning(f"Could not transition model stage: {e}")
+
         logger.info("Summarization model training complete on real dataset.")
         
     except Exception as e:
         logger.error(f"Failed to load real dataset: {e}")
         import traceback; traceback.print_exc()
+

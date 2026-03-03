@@ -73,8 +73,6 @@ def run_ingestion_job():
     
     feeds = [
         "https://vnexpress.net/rss/kinh-doanh.rss",
-        "https://cafef.vn/trang-chu.rss",
-        "https://vietstock.vn/rss/vi/tin-tuc-su-kien.rss",
         "https://vneconomy.vn/rss.rss"
     ]
     
