@@ -12,15 +12,43 @@
         ::-webkit-scrollbar-track { background: #1f2937; }
         ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
-        
+
         .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
+
         .glass-card {
             background: rgba(31, 41, 55, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Timeline styling */
+        .timeline-line {
+            position: absolute;
+            left: 1.25rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #6366f1, #4f46e5, #3730a3);
+        }
+        @media (min-width: 768px) {
+            .timeline-line { left: 50%; transform: translateX(-1px); }
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 1.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #6366f1;
+            border: 2px solid #1f2937;
+            transform: translate(-50%, 0);
+            z-index: 10;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+        }
+        @media (min-width: 768px) {
+            .timeline-dot { left: 50%; }
         }
     </style>
 </head>
@@ -28,7 +56,7 @@
 
     <!-- Navbar -->
     <nav class="sticky top-0 z-50 glass-card border-b border-gray-800 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-3">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30">
@@ -50,20 +78,22 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex justify-between items-end mb-8">
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex justify-between items-end mb-10">
             <div>
-                <h1 class="text-3xl font-bold tracking-tight text-white mb-2">Real-Time News Stream</h1>
-                <p class="text-gray-400">Auto-crawled from CafeF, Vietstock, and VnEconomy every 3 minutes.</p>
+                <h1 class="text-3xl font-bold tracking-tight text-white mb-2">News Timeline</h1>
+                <p class="text-gray-400">Auto-crawled from CafeF, Vietstock, and VnEconomy — newest first.</p>
             </div>
-            <div class="text-sm font-medium text-gray-500 bg-gray-800/50 px-4 py-2 rounded-full border border-gray-700/50">
-                Auto-updating...
+            <div id="article-count" class="text-sm font-medium text-gray-500 bg-gray-800/50 px-4 py-2 rounded-full border border-gray-700/50">
+                Loading...
             </div>
         </div>
 
-        <div id="articles-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Timeline container -->
+        <div id="timeline-container" class="relative">
+            <div class="timeline-line"></div>
             <!-- Articles will be injected here via JS -->
-            <div class="col-span-full flex justify-center py-20">
+            <div class="flex justify-center py-20">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
             </div>
         </div>
@@ -71,53 +101,114 @@
 
     <script>
         function getSentimentColor(sentiment) {
-            const s = sentiment.toLowerCase();
+            const s = (sentiment || '').toLowerCase();
             if (s === 'positive' || s === 'good') return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
             if (s === 'negative' || s === 'bad') return 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
             return 'bg-gray-500/10 text-gray-300 border border-gray-500/20';
         }
 
-        function createCard(article) {
-            const sentimentBadge = `<span class="px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider ${getSentimentColor(article.sentiment)}">${article.sentiment}</span>`;
-            
-            const stockBadges = article.stocks.length > 0 
-                ? article.stocks.map(stock => `<span class="px-2.5 py-1 rounded-md text-xs font-bold text-blue-300 bg-blue-900/30 border border-blue-800/50 hover:bg-blue-800/40 transition-colors shadow-[0_0_10px_rgba(59,130,246,0.1)] glow cursor-pointer">${stock}</span>`).join('')
-                : '';
-                
-            const badgesHtml = `<div class="flex flex-wrap gap-2 mb-4">${sentimentBadge}${stockBadges}</div>`;
-            
-            const dateStr = article.published ? new Date(article.published).toLocaleString() : 'Recent';
-            
-            // Clean up source URL to display domain name
-            const sourceUrl = article.source || '';
-            const domain = sourceUrl.replace('https://', '').replace('.rss', '').split('/')[0] || 'News Source';
+        function getSentimentIcon(sentiment) {
+            const s = (sentiment || '').toLowerCase();
+            if (s === 'positive' || s === 'good') return '&#9650;';  // up arrow
+            if (s === 'negative' || s === 'bad') return '&#9660;';   // down arrow
+            return '&#9644;'; // dash
+        }
 
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Recent';
+            try {
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('vi-VN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            } catch { return dateStr; }
+        }
+
+        function getRelativeTime(dateStr) {
+            if (!dateStr) return '';
+            try {
+                const d = new Date(dateStr);
+                const now = new Date();
+                const diffMs = now - d;
+                const diffMin = Math.floor(diffMs / 60000);
+                if (diffMin < 1) return 'just now';
+                if (diffMin < 60) return diffMin + 'm ago';
+                const diffH = Math.floor(diffMin / 60);
+                if (diffH < 24) return diffH + 'h ago';
+                const diffD = Math.floor(diffH / 24);
+                return diffD + 'd ago';
+            } catch { return ''; }
+        }
+
+        function createTimelineItem(article, index) {
+            const isLeft = index % 2 === 0;
+            const sentimentBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider ${getSentimentColor(article.sentiment)}">${getSentimentIcon(article.sentiment)} ${article.sentiment || 'Neutral'}</span>`;
+
+            const stockBadges = (article.stocks && article.stocks.length > 0)
+                ? article.stocks.map(stock => `<span class="px-2.5 py-1 rounded-md text-xs font-bold text-blue-300 bg-blue-900/30 border border-blue-800/50 hover:bg-blue-800/40 transition-colors shadow-[0_0_10px_rgba(59,130,246,0.1)] cursor-pointer">${stock}</span>`).join('')
+                : '';
+
+            const sourceUrl = article.source || '';
+            const domain = sourceUrl.replace('https://', '').replace('http://', '').replace('.rss', '').split('/')[0] || 'News Source';
+
+            const relTime = getRelativeTime(article.published);
+            const fullDate = formatDate(article.published);
+
+            const summaryText = article.nlp_summary || 'No summary available.';
+
+            // Mobile: always left. Desktop: alternate left/right
             return `
-                <div class="glass-card rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10 hover:border-gray-700 group fade-in flex flex-col h-full">
-                    ${badgesHtml}
-                    
-                    <a href="${article.link}" target="_blank" class="block group-hover:text-indigo-400 transition-colors">
-                        <h2 class="text-lg font-bold text-white mb-3 line-clamp-3 leading-snug">${article.title}</h2>
-                    </a>
-                    
-                    <div class="flex-grow">
-                        <div class="relative pl-4 border-l-2 border-indigo-500/50 bg-indigo-500/5 p-3 rounded-r-lg mb-4">
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1 flex items-center">
-                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                AI Summary
-                            </h3>
-                            <p class="text-sm text-gray-300 leading-relaxed line-clamp-4">
-                                ${article.nlp_summary || 'No summary generated yet.'}
-                            </p>
+                <div class="relative pl-12 md:pl-0 mb-10 fade-in md:flex md:items-start ${isLeft ? 'md:flex-row-reverse' : ''}">
+                    <!-- Timeline dot -->
+                    <div class="timeline-dot top-6"></div>
+
+                    <!-- Date label (desktop: opposite side) -->
+                    <div class="hidden md:flex md:w-1/2 ${isLeft ? 'md:justify-start md:pl-12' : 'md:justify-end md:pr-12'} items-start pt-5">
+                        <div class="text-right ${isLeft ? 'text-left' : ''}">
+                            <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">${relTime}</span>
+                            <br>
+                            <span class="text-xs text-gray-500">${fullDate}</span>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
-                        <span class="text-xs font-medium text-gray-500 flex items-center">
-                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
-                            ${domain}
-                        </span>
-                        <span class="text-xs text-gray-500">${dateStr}</span>
+
+                    <!-- Card -->
+                    <div class="md:w-1/2 ${isLeft ? 'md:pr-12' : 'md:pl-12'}">
+                        <div class="glass-card rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10 hover:border-gray-700 group">
+                            <!-- Mobile date -->
+                            <div class="md:hidden flex items-center gap-2 mb-3">
+                                <span class="text-xs font-bold text-indigo-400">${relTime}</span>
+                                <span class="text-xs text-gray-500">${fullDate}</span>
+                            </div>
+
+                            <!-- Badges row -->
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                ${sentimentBadge}
+                                ${stockBadges}
+                            </div>
+
+                            <!-- Title -->
+                            <a href="${article.link}" target="_blank" class="block group-hover:text-indigo-400 transition-colors">
+                                <h2 class="text-base font-bold text-white mb-3 leading-snug line-clamp-3">${article.title}</h2>
+                            </a>
+
+                            <!-- AI Summary -->
+                            <div class="relative pl-3 border-l-2 border-indigo-500/50 bg-indigo-500/5 p-3 rounded-r-lg mb-3">
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1 flex items-center">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    AI Summary
+                                </h3>
+                                <p class="text-sm text-gray-300 leading-relaxed line-clamp-4">${summaryText}</p>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="flex items-center justify-between pt-3 border-t border-gray-800">
+                                <span class="text-xs font-medium text-gray-500 flex items-center">
+                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                                    ${domain}
+                                </span>
+                                <a href="${article.link}" target="_blank" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-medium">
+                                    Read full &rarr;
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -127,29 +218,46 @@
             try {
                 const response = await fetch('/api/v1/articles');
                 const articles = await response.json();
-                
-                const container = document.getElementById('articles-container');
+                const container = document.getElementById('timeline-container');
+                const countEl = document.getElementById('article-count');
+
                 if (articles.length === 0) {
                     container.innerHTML = `
-                        <div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
+                        <div class="timeline-line"></div>
+                        <div class="flex flex-col items-center justify-center py-20 text-gray-500">
                             <svg class="w-16 h-16 mb-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
                             <p class="text-lg font-medium">No articles parsed yet.</p>
                             <p class="text-sm">The background crawler will populate this shortly...</p>
                         </div>
                     `;
+                    countEl.textContent = '0 articles';
                     return;
                 }
-                
-                // Construct new HTML
-                let newHtml = '';
-                articles.forEach(article => {
-                    newHtml += createCard(article);
+
+                countEl.textContent = articles.length + ' articles';
+
+                // Group articles by date for timeline headers
+                let html = '<div class="timeline-line"></div>';
+                let lastDate = '';
+                articles.forEach((article, idx) => {
+                    const dateKey = article.published ? new Date(article.published).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown date';
+                    if (dateKey !== lastDate) {
+                        html += `
+                            <div class="relative pl-12 md:pl-0 mb-6 md:flex md:justify-center fade-in">
+                                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-600/20 border border-indigo-500/30 text-xs font-bold text-indigo-300 uppercase tracking-wider shadow-lg">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    ${dateKey}
+                                </div>
+                            </div>
+                        `;
+                        lastDate = dateKey;
+                    }
+                    html += createTimelineItem(article, idx);
                 });
-                
-                // Only update DOM if content actually changed to prevent flashing
-                if (container.dataset.contentHash !== String(articles[0]?.id)) {
-                    container.innerHTML = newHtml;
-                    container.dataset.contentHash = articles[0]?.id; // simple hash technique using latest ID
+
+                if (container.dataset.contentHash !== String(articles[0]?.id) + '-' + articles.length) {
+                    container.innerHTML = html;
+                    container.dataset.contentHash = articles[0]?.id + '-' + articles.length;
                 }
             } catch (error) {
                 console.error("Error fetching articles:", error);
@@ -158,9 +266,9 @@
 
         // Initial fetch
         fetchArticles();
-        
-        // Poll every 5 seconds
-        setInterval(fetchArticles, 5000);
+
+        // Poll every 10 seconds
+        setInterval(fetchArticles, 10000);
     </script>
 </body>
 </html>

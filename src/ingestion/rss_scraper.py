@@ -1,9 +1,25 @@
 import feedparser
+import html
+import re
 import logging
 from bs4 import BeautifulSoup
 from typing import List, Dict
 
 logger = logging.getLogger(__name__)
+
+
+def decode_html_entities(text: str) -> str:
+    """Decode HTML entities including broken ones (e.g. #225; without &)."""
+    if not text:
+        return ""
+    # Fix broken numeric entities: #225; -> &#225;
+    text = re.sub(r'(?<!&)#(\d+);', r'&#\1;', text)
+    # Fix broken named entities: e.g. nbsp; without &
+    text = re.sub(r'(?<!&)((?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|laquo|raquo|hellip));', r'&\1;', text)
+    # Decode all HTML entities
+    text = html.unescape(text)
+    return text
+
 
 class RSSScraper:
     """Scrapes financial news from RSS feeds."""
@@ -12,11 +28,13 @@ class RSSScraper:
         self.feed_urls = feed_urls
 
     def clean_html(self, raw_html: str) -> str:
-        """Removes HTML tags from a string."""
+        """Removes HTML tags and decodes HTML entities from a string."""
         if not raw_html:
             return ""
         soup = BeautifulSoup(raw_html, "html.parser")
-        return soup.get_text(separator=" ", strip=True)
+        text = soup.get_text(separator=" ", strip=True)
+        text = decode_html_entities(text)
+        return text
 
     def scrape(self) -> List[Dict]:
         """Scrapes all configured feeds and returns a list of article dictionaries."""

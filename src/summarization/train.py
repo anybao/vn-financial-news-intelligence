@@ -84,9 +84,21 @@ def train_epoch(model, dataloader, optimizer, criterion, clip, device):
 if __name__ == "__main__":
     print("ENTRY: Starting Summarizer Models execution block...")
     logger.info("Initializing Summarizer Models...")
+    
+    import mlflow
+    import random
+    import os
+    from datasets import load_dataset
+    from transformers import AutoTokenizer
+    from torch.utils.data import DataLoader, TensorDataset
+    
+    # Load tokenizer first to get actual vocab size
+    tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base")
+    VOCAB_SIZE = tokenizer.vocab_size  # Use actual PhoBERT vocab size (~64000)
+    
     # These parameters would normally come from config
-    INPUT_DIM = 50000
-    OUTPUT_DIM = 50000
+    INPUT_DIM = VOCAB_SIZE
+    OUTPUT_DIM = VOCAB_SIZE
     ENC_EMB_DIM = 256
     DEC_EMB_DIM = 256
     HID_DIM = 512
@@ -100,14 +112,7 @@ if __name__ == "__main__":
     dec = AttnDecoderLSTM(OUTPUT_DIM, DEC_EMB_DIM, HID_DIM, N_LAYERS, DEC_DROPOUT)
     
     model = Seq2SeqSummarizer(enc, dec, device).to(device)
-    logger.info("Summarization model initialized.")
-    
-    import mlflow
-    import random
-    import os
-    from datasets import load_dataset
-    from transformers import AutoTokenizer
-    from torch.utils.data import DataLoader, TensorDataset
+    logger.info(f"Summarization model initialized. Vocab size: {VOCAB_SIZE}")
     import torch.optim as optim
     
     os.environ["MLFLOW_TRACKING_URI"] = "http://localhost:5001"
@@ -120,8 +125,6 @@ if __name__ == "__main__":
         # Pull 500 samples for fast local training showcase
         dataset = load_dataset("OpenHust/vietnamese-summarization", split="train[:500]")
         eval_dataset = load_dataset("OpenHust/vietnamese-summarization", split="train[500:550]")
-        
-        tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base")
         
         # 2. Truncation and Handling Long Documents
         def process_data(examples):
@@ -141,9 +144,15 @@ if __name__ == "__main__":
         logger.info("Initializing DataLoaders...")
         from torch.utils.data import TensorDataset, DataLoader
         
+        # Convert HuggingFace Dataset columns to stacked tensors for TensorDataset
+        src_train = torch.stack([row["src_ids"] for row in dataset])
+        trg_train = torch.stack([row["trg_ids"] for row in dataset])
+        src_eval = torch.stack([row["src_ids"] for row in eval_dataset])
+        trg_eval = torch.stack([row["trg_ids"] for row in eval_dataset])
+        
         # Avoid MacOS PyTorch DataLoader deadlocks
         train_loader = DataLoader(
-            TensorDataset(dataset["src_ids"], dataset["trg_ids"]), 
+            TensorDataset(src_train, trg_train), 
             batch_size=16, 
             shuffle=True, 
             num_workers=0
@@ -161,8 +170,9 @@ if __name__ == "__main__":
             from src.summarization.beam_search import decode_beam_search
             evaluator = SummarizationEvaluator()
             
+            NUM_EPOCHS = 3
             logger.info("Starting Actual Training Loop over Real Dataset...")
-            for epoch in range(3):
+            for epoch in range(NUM_EPOCHS):
                 model.train()
                 epoch_loss = 0
                 for batch_idx, (src, trg) in enumerate(train_loader):
@@ -185,7 +195,18 @@ if __name__ == "__main__":
                     
                 avg_loss = epoch_loss / len(train_loader)
                 mlflow.log_metric("train_loss", avg_loss, step=epoch)
-                logger.info(f"Epoch {epoch + 1}/3: Avg Loss: {avg_loss:.4f}")
+                logger.info(f"Epoch {epoch + 1}/{NUM_EPOCHS}: Avg Loss: {avg_loss:.4f}")
+                
+                # --- Save per-epoch checkpoint ---
+                ckpt_dir = f"models/summarizer/checkpoint-{epoch + 1}"
+                os.makedirs(ckpt_dir, exist_ok=True)
+                torch.save({
+                    "epoch": epoch + 1,
+                    "model_state_dict": model.state_dict(),
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "loss": avg_loss,
+                }, f"{ckpt_dir}/checkpoint.pt")
+                logger.info(f"Saved checkpoint to {ckpt_dir}/checkpoint.pt")
                 
                 # --- Validation Loop with BLEU & ROUGE ---
                 model.eval()
@@ -216,10 +237,32 @@ if __name__ == "__main__":
                     mlflow.log_metric("val_bleu", scores.get("sacrebleu", 0), step=epoch)
                     logger.info(f"Validation Scores - ROUGE-L: {scores.get('rougeL', 0):.4f} | BLEU: {scores.get('sacrebleu', 0):.4f}")
                 
-            # Save the trained model to disk
+            # Save the trained model, config, and tokenizer to disk
             os.makedirs("models/summarizer", exist_ok=True)
             torch.save(model.state_dict(), "models/summarizer/summarizer.pt")
             logger.info("Saved summarization model to models/summarizer/summarizer.pt")
+            
+            # Save architecture config so inference doesn't need hardcoded values
+            import json
+            config = {
+                "vocab_size": VOCAB_SIZE,
+                "enc_emb_dim": ENC_EMB_DIM,
+                "dec_emb_dim": DEC_EMB_DIM,
+                "hidden_size": HID_DIM,
+                "num_layers": N_LAYERS,
+                "enc_dropout": ENC_DROPOUT,
+                "dec_dropout": DEC_DROPOUT,
+                "src_max_len": 256,
+                "trg_max_len": 64,
+                "tokenizer_name": "vinai/phobert-base",
+            }
+            with open("models/summarizer/config.json", "w") as f:
+                json.dump(config, f, indent=2)
+            logger.info("Saved config.json to models/summarizer/config.json")
+            
+            # Save tokenizer alongside the model
+            tokenizer.save_pretrained("models/summarizer")
+            logger.info("Saved tokenizer to models/summarizer/")
 
             # Register to MLflow Model Registry
             logger.info("Registering SummarizationModel to MLflow Model Registry...")

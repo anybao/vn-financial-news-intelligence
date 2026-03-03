@@ -3,3 +3,7 @@ models/*
 
 # Except for the .gitkeep file (which keeps the directory in git)
 !models/.gitkeep
+
+docs/*
+
+!docs/.gitkeep

@@ -4,10 +4,21 @@ from sqlalchemy.orm import Session
 from src.api.schemas import ArticleRequest, SummaryResponse, SentimentResponse, NERResponse, EventPredictionResponse
 from src.database import get_db
 from src.models import Article
+import html
 import os
+import re
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def _clean_entities(text: str) -> str:
+    """Decode broken HTML entities like #225; -> á."""
+    if not text:
+        return ""
+    text = re.sub(r'(?<!&)#(\d+);', r'&#\1;', text)
+    return html.unescape(text)
+
 
 # Initialize Router
 router = APIRouter()
@@ -152,18 +163,61 @@ async def model_info():
 
 @router.get("/articles")
 async def get_articles(db: Session = Depends(get_db)):
-    """Fetch the latest 50 NLP-processed articles."""
+    """Fetch the latest 50 NLP-processed articles with on-the-fly NLP fallback."""
     articles = db.query(Article).order_by(Article.created_at.desc()).limit(50).all()
-    return [{
-        "id": a.id,
-        "title": a.title,
-        "link": a.link,
-        "published": a.published,
-        "source": a.source,
-        "nlp_summary": a.nlp_summary,
-        "sentiment": a.sentiment,
-        "stocks": [s for s in a.stocks.split(",") if s] if a.stocks else []
-    } for a in articles]
+    results = []
+    for a in articles:
+        stocks = [s for s in a.stocks.split(",") if s] if a.stocks else []
+        nlp_summary = a.nlp_summary if a.nlp_summary else None
+
+        # On-the-fly fallback: extract stocks if missing
+        text_for_nlp = f"{a.title}. {a.raw_summary or ''}"
+        if not stocks:
+            try:
+                stocks_res = ner_predictor.extract_stocks(text_for_nlp)
+                stocks = stocks_res.get("stocks", [])
+                if stocks:
+                    a.stocks = ",".join(stocks)
+                    db.commit()
+            except Exception:
+                pass
+
+        # On-the-fly fallback: generate summary if missing
+        if not nlp_summary:
+            try:
+                nlp_summary = summarizer.summarize(text_for_nlp)
+                if nlp_summary:
+                    a.nlp_summary = nlp_summary
+                    db.commit()
+            except Exception:
+                pass
+
+        # Final fallback: use raw_summary if NLP summary still empty
+        display_summary = _clean_entities(nlp_summary or a.raw_summary or "")
+
+        # On-the-fly fallback: run sentiment if still default
+        sentiment = a.sentiment
+        if not sentiment or sentiment == "Neutral":
+            try:
+                sent_res = sentiment_predictor.predict(text_for_nlp)
+                sentiment = sent_res.get("sentiment", "Neutral")
+                if sentiment != a.sentiment:
+                    a.sentiment = sentiment
+                    db.commit()
+            except Exception:
+                pass
+
+        results.append({
+            "id": a.id,
+            "title": a.title,
+            "link": a.link,
+            "published": a.published,
+            "source": a.source,
+            "nlp_summary": display_summary,
+            "sentiment": sentiment,
+            "stocks": stocks
+        })
+    return results
 
 @router.get("/dashboard", response_class=HTMLResponse)
 async def get_dashboard():
