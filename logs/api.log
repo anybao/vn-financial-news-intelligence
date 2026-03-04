@@ -1,0 +1,12 @@
+2026-03-04 11:07:47 | INFO     | src.summarization.train | Initializing Summarization Module (Pre-Main)...
+2026-03-04 11:07:50 | INFO     | src.summarization.infer | Loaded model config from models/summarizer/config.json
+2026-03-04 11:07:50 | INFO     | src.summarization.infer | Loaded tokenizer from models/summarizer
+2026-03-04 11:07:51 | INFO     | src.summarization.infer | Successfully loaded fine-tuned summarizer model from models/summarizer/summarizer.pt
+2026-03-04 11:07:55 | INFO     | src.api.routes | Loaded SentimentModel from MLflow Registry (Production)
+2026-03-04 11:07:57 | INFO     | src.api.routes | Loaded NERModel from MLflow Registry (Production)
+2026-03-04 11:08:28 | INFO     | src.api.routes | POST /summarize | input_len=234 chars
+2026-03-04 11:08:28 | INFO     | src.summarization.infer | Seq2Seq model produced degenerate output; falling back to extractive summarization.
+2026-03-04 11:08:28 | INFO     | src.api.routes | POST /summarize | output_len=234 chars | summary_preview='Hòa Phát vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế đạt 2940 tỷ đ...'
+2026-03-04 11:12:59 | INFO     | src.api.routes | POST /summarize | input_len=1173 chars
+2026-03-04 11:13:00 | INFO     | src.summarization.infer | Seq2Seq model produced degenerate output; falling back to extractive summarization.
+2026-03-04 11:13:00 | INFO     | src.api.routes | POST /summarize | output_len=593 chars | summary_preview='VN-Index ít chịu tác động trực tiếp hơn các chỉ số chứng khoán toàn cầu khi xung...'

@@ -134,9 +134,12 @@ ner_predictor = _load_ner_predictor()
 @router.post("/summarize", response_model=SummaryResponse)
 def summarize_text(request: ArticleRequest):
     try:
+        logger.info(f"POST /summarize | input_len={len(request.text)} chars")
         summary = summarizer.summarize(request.text)
+        logger.info(f"POST /summarize | output_len={len(summary)} chars | summary_preview='{summary[:80]}...'")
         return SummaryResponse(summary=summary)
     except Exception as e:
+        logger.error(f"POST /summarize | ERROR: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/sentiment", response_model=SentimentResponse)

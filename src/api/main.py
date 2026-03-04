@@ -1,4 +1,32 @@
 import uvicorn
+import logging
+import os
+from logging.handlers import RotatingFileHandler
+
+# ── Configure logging BEFORE any app imports ──────────────────────────────────
+LOG_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = os.path.join(LOG_DIR, "api.log")
+
+_log_fmt = logging.Formatter(
+    "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+_root = logging.getLogger()
+_root.setLevel(logging.INFO)
+
+# Console handler
+_console = logging.StreamHandler()
+_console.setFormatter(_log_fmt)
+_root.addHandler(_console)
+
+# File handler – rotates at 5 MB, keeps 3 backups
+_file = RotatingFileHandler(LOG_FILE, maxBytes=5_000_000, backupCount=3, encoding="utf-8")
+_file.setFormatter(_log_fmt)
+_root.addHandler(_file)
+
+# ── Now import app modules ────────────────────────────────────────────────────
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from src.api.routes import router as api_router
