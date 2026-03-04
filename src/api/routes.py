@@ -77,12 +77,36 @@ def _load_ner_predictor():
                 from src.ner.predict_ner import HybridNERPredictor
                 self._rule_based = HybridNERPredictor.__new__(HybridNERPredictor)
                 self._rule_based.stock_dictionary = {
+                    "ACB": ["ACB", "Ngân hàng Á Châu", "Asia Commercial Bank"],
+                    "BCM": ["BCM", "Becamex IDC", "Tổng Công ty Becamex IDC"],
+                    "BID": ["BID", "BIDV", "Ngân hàng Đầu tư và Phát triển Việt Nam"],
+                    "BVH": ["BVH", "Bảo Việt", "Tập đoàn Bảo Việt"],
+                    "CTG": ["CTG", "VietinBank", "Ngân hàng Công Thương Việt Nam"],
                     "FPT": ["FPT", "Công ty Cổ phần FPT", "Tập đoàn FPT"],
-                    "VCB": ["VCB", "Vietcombank", "Ngân hàng Ngoại thương Việt Nam"],
-                    "VNM": ["VNM", "Vinamilk", "Công ty Cổ phần Sữa Việt Nam"],
-                    "VIC": ["VIC", "Vingroup", "Tập đoàn Vingroup"],
+                    "GAS": ["GAS", "PV Gas", "Tổng Công ty Khí Việt Nam"],
+                    "GVR": ["GVR", "Cao su Việt Nam", "Tập đoàn Công nghiệp Cao su Việt Nam"],
+                    "HDB": ["HDB", "HDBank", "Ngân hàng Phát triển TP.HCM"],
                     "HPG": ["HPG", "Hòa Phát", "Tập đoàn Hòa Phát"],
-                    "TCB": ["TCB", "Techcombank", "Ngân hàng Kỹ thương Việt Nam"]
+                    "MBB": ["MBB", "MB Bank", "Ngân hàng Quân đội", "MB"],
+                    "MSN": ["MSN", "Masan", "Tập đoàn Masan"],
+                    "MWG": ["MWG", "Thế Giới Di Động", "Mobile World"],
+                    "PLX": ["PLX", "Petrolimex", "Tập đoàn Xăng dầu Việt Nam"],
+                    "POW": ["POW", "PV Power", "Tổng Công ty Điện lực Dầu khí Việt Nam"],
+                    "SAB": ["SAB", "Sabeco", "Tổng Công ty Bia Rượu Nước giải khát Sài Gòn"],
+                    "SHB": ["SHB", "Ngân hàng Sài Gòn - Hà Nội"],
+                    "SSB": ["SSB", "SeABank", "Ngân hàng Đông Nam Á"],
+                    "SSI": ["SSI", "Chứng khoán SSI", "Công ty Chứng khoán SSI"],
+                    "STB": ["STB", "Sacombank", "Ngân hàng Sài Gòn Thương Tín"],
+                    "TCB": ["TCB", "Techcombank", "Ngân hàng Kỹ thương Việt Nam"],
+                    "TPB": ["TPB", "TPBank", "Ngân hàng Tiên Phong"],
+                    "VCB": ["VCB", "Vietcombank", "Ngân hàng Ngoại thương Việt Nam"],
+                    "VHM": ["VHM", "Vinhomes", "Công ty Cổ phần Vinhomes"],
+                    "VIB": ["VIB", "Ngân hàng Quốc tế Việt Nam"],
+                    "VIC": ["VIC", "Vingroup", "Tập đoàn Vingroup"],
+                    "VJC": ["VJC", "Vietjet Air", "Vietjet", "Hãng hàng không Vietjet"],
+                    "VNM": ["VNM", "Vinamilk", "Công ty Cổ phần Sữa Việt Nam"],
+                    "VPB": ["VPB", "VPBank", "Ngân hàng Việt Nam Thịnh Vượng"],
+                    "VRE": ["VRE", "Vincom Retail", "Công ty Cổ phần Vincom Retail"]
                 }
             def extract_stocks(self, text: str) -> dict:
                 rule_stocks = self._rule_based.predict_rule_based(text)

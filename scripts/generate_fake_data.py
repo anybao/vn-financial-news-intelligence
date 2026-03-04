@@ -25,15 +25,43 @@ logger = logging.getLogger(__name__)
 
 # ── Templates ──────────────────────────────────────────────────────────────────
 
-STOCK_TICKERS = ["FPT", "VCB", "VNM", "VIC", "HPG", "TCB"]
+STOCK_TICKERS = [
+    "ACB", "BCM", "BID", "BVH", "CTG", "FPT", "GAS", "GVR", "HDB", "HPG",
+    "MBB", "MSN", "MWG", "PLX", "POW", "SAB", "SHB", "SSB", "SSI", "STB",
+    "TCB", "TPB", "VCB", "VHM", "VIB", "VIC", "VJC", "VNM", "VPB", "VRE",
+]
 
 STOCK_NAMES = {
+    "ACB": "Ngân hàng Á Châu",
+    "BCM": "Becamex IDC",
+    "BID": "BIDV",
+    "BVH": "Bảo Việt",
+    "CTG": "VietinBank",
     "FPT": "Tập đoàn FPT",
-    "VCB": "Vietcombank",
-    "VNM": "Vinamilk",
-    "VIC": "Vingroup",
+    "GAS": "PV Gas",
+    "GVR": "Cao su Việt Nam",
+    "HDB": "HDBank",
     "HPG": "Hòa Phát",
+    "MBB": "MB Bank",
+    "MSN": "Masan",
+    "MWG": "Thế Giới Di Động",
+    "PLX": "Petrolimex",
+    "POW": "PV Power",
+    "SAB": "Sabeco",
+    "SHB": "Ngân hàng Sài Gòn - Hà Nội",
+    "SSB": "SeABank",
+    "SSI": "Chứng khoán SSI",
+    "STB": "Sacombank",
     "TCB": "Techcombank",
+    "TPB": "TPBank",
+    "VCB": "Vietcombank",
+    "VHM": "Vinhomes",
+    "VIB": "Ngân hàng Quốc tế Việt Nam",
+    "VIC": "Vingroup",
+    "VJC": "Vietjet Air",
+    "VNM": "Vinamilk",
+    "VPB": "VPBank",
+    "VRE": "Vincom Retail",
 }
 
 SOURCES = [
