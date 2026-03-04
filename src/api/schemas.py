@@ -11,7 +11,7 @@ class SummarizationModel(str, Enum):
 
 
 class ArticleRequest(BaseModel):
-    """Input payload for NLP processing endpoints."""
+    """Input payload for NLP processing endpoints (sentiment, NER, predict_event)."""
     text: str = Field(
         ...,
         title="Article Text",
@@ -19,7 +19,18 @@ class ArticleRequest(BaseModel):
         min_length=10,
         json_schema_extra={"example": "Hòa Phát vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế đạt 2940 tỷ đồng, tăng 30% so với cùng kỳ năm trước."}
     )
-    model: Optional[SummarizationModel] = Field(
+
+
+class SummarizeRequest(BaseModel):
+    """Input payload for the /summarize endpoint with model selection."""
+    text: str = Field(
+        ...,
+        title="Article Text",
+        description="The full text of the financial news article to summarize.",
+        min_length=10,
+        json_schema_extra={"example": "Hòa Phát vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế đạt 2940 tỷ đồng, tăng 30% so với cùng kỳ năm trước. Doanh thu thuần đạt 21165 tỷ đồng, vượt 21% so với kế hoạch."}
+    )
+    engine: SummarizationModel = Field(
         default=SummarizationModel.vit5,
         title="Summarization Model",
         description=(
@@ -37,11 +48,11 @@ class ArticleRequest(BaseModel):
         "examples": [
             {
                 "text": "Hòa Phát vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế đạt 2940 tỷ đồng, tăng 30% so với cùng kỳ năm trước. Doanh thu thuần đạt 21165 tỷ đồng, vượt 21% so với kế hoạch.",
-                "model": "vit5"
+                "engine": "vit5"
             },
             {
                 "text": "VN-Index tăng 15 điểm nhờ nhóm ngân hàng dẫn dắt. Khối ngoại mua ròng 500 tỷ đồng.",
-                "model": "seq2seq"
+                "engine": "seq2seq"
             },
         ]
     }}
@@ -55,7 +66,7 @@ class SummaryResponse(BaseModel):
         description="The generated summary text.",
         json_schema_extra={"example": "Hòa Phát báo lãi 2.940 tỷ đồng trong quý, tăng 30% so với cùng kỳ."}
     )
-    model: SummarizationModel = Field(
+    engine: SummarizationModel = Field(
         default=SummarizationModel.vit5,
         title="Model Used",
         description="The summarization model that produced this result.",

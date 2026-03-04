@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
-from src.api.schemas import ArticleRequest, SummaryResponse, SentimentResponse, NERResponse, EventPredictionResponse
+from src.api.schemas import ArticleRequest, SummarizeRequest, SummaryResponse, SentimentResponse, NERResponse, EventPredictionResponse
 from src.database import get_db
 from src.models import Article
 import html
@@ -148,13 +148,13 @@ ner_predictor = _load_ner_predictor()
     response_description="The generated summary and the model that produced it.",
     tags=["Summarization"],
 )
-def summarize_text(request: ArticleRequest):
+def summarize_text(request: SummarizeRequest):
     try:
-        model_name = (request.model.value if request.model else "vit5")
-        logger.info(f"POST /summarize | model={model_name} | input_len={len(request.text)} chars")
+        model_name = request.engine.value if request.engine else "vit5"
+        logger.info(f"POST /summarize | engine={model_name} | input_len={len(request.text)} chars")
         summary = summarizer.summarize(request.text, model=model_name)
-        logger.info(f"POST /summarize | model={model_name} | output_len={len(summary)} chars | summary_preview='{summary[:80]}...'")
-        return SummaryResponse(summary=summary, model=model_name)
+        logger.info(f"POST /summarize | engine={model_name} | output_len={len(summary)} chars | summary_preview='{summary[:80]}...'")
+        return SummaryResponse(summary=summary, engine=model_name)
     except Exception as e:
         logger.error(f"POST /summarize | ERROR: {e}")
         raise HTTPException(status_code=500, detail=str(e))

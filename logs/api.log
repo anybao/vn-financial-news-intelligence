@@ -80,3 +80,50 @@
 2026-03-04 12:07:35 | INFO     | src.summarization.infer | Loaded Seq2Seq weights from models/summarizer/summarizer.pt
 2026-03-04 12:07:39 | INFO     | src.api.routes | Loaded SentimentModel from MLflow Registry (Production)
 2026-03-04 12:07:42 | INFO     | src.api.routes | Loaded NERModel from MLflow Registry (Production)
+2026-03-04 15:40:43 | INFO     | src.summarization.train | Initializing Summarization Module (Pre-Main)...
+2026-03-04 15:40:52 | INFO     | src.summarization.infer | Loaded ViT5 abstractive model: VietAI/vit5-base-vietnews-summarization
+2026-03-04 15:40:52 | INFO     | src.summarization.infer | Loaded Seq2Seq config from models/summarizer/config.json
+2026-03-04 15:40:52 | INFO     | src.summarization.infer | Loaded Seq2Seq tokenizer from models/summarizer
+2026-03-04 15:40:54 | INFO     | src.summarization.infer | Loaded Seq2Seq weights from models/summarizer/summarizer.pt
+2026-03-04 15:40:59 | INFO     | src.api.routes | Loaded SentimentModel from MLflow Registry (Production)
+2026-03-04 15:41:02 | INFO     | src.api.routes | Loaded NERModel from MLflow Registry (Production)
+2026-03-04 15:42:20 | INFO     | src.api.routes | POST /summarize | engine=vit5 | input_len=180 chars
+2026-03-04 15:42:22 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (87 chars)
+2026-03-04 15:42:22 | INFO     | src.api.routes | POST /summarize | engine=vit5 | output_len=87 chars | summary_preview='Lợi nhuận sau thuế của Hoà Phát đạt 2940 tỷ đồng , tăng 30 % so với cùng kỳ năm ...'
+2026-03-04 15:43:48 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (135 chars)
+2026-03-04 15:43:51 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (133 chars)
+2026-03-04 15:43:54 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (139 chars)
+2026-03-04 15:43:56 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (178 chars)
+2026-03-04 15:43:59 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (146 chars)
+2026-03-04 15:44:02 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (132 chars)
+2026-03-04 15:44:04 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (135 chars)
+2026-03-04 15:44:06 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (142 chars)
+2026-03-04 15:44:09 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (129 chars)
+2026-03-04 15:44:11 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (150 chars)
+2026-03-04 15:51:50 | INFO     | src.api.routes | POST /summarize | engine=vit5 | input_len=921 chars
+2026-03-04 15:51:52 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (150 chars)
+2026-03-04 15:51:52 | INFO     | src.api.routes | POST /summarize | engine=vit5 | output_len=150 chars | summary_preview='Ngân hàng TMCP Quân đội ( MB Bank ) vừa công bố kết quả kinh doanh quý với lợi n...'
+2026-03-04 15:52:24 | INFO     | src.api.routes | POST /summarize | engine=seq2seq | input_len=921 chars
+2026-03-04 15:52:24 | INFO     | src.summarization.infer | Model switch → Seq2Seq BiLSTM + Bahdanau Attention
+2026-03-04 15:52:24 | INFO     | src.summarization.infer | Seq2Seq produced degenerate output.
+2026-03-04 15:52:24 | WARNING  | src.summarization.infer | Seq2Seq produced degenerate output; falling back to extractive.
+2026-03-04 15:52:24 | INFO     | src.api.routes | POST /summarize | engine=seq2seq | output_len=324 chars | summary_preview='MB Bank vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế đạt 11024 tỷ đ...'
+2026-03-04 15:52:42 | INFO     | src.api.routes | POST /summarize | engine=seq2seq | input_len=921 chars
+2026-03-04 15:52:42 | INFO     | src.summarization.infer | Model switch → Seq2Seq BiLSTM + Bahdanau Attention
+2026-03-04 15:52:42 | INFO     | src.summarization.infer | Seq2Seq produced degenerate output.
+2026-03-04 15:52:42 | WARNING  | src.summarization.infer | Seq2Seq produced degenerate output; falling back to extractive.
+2026-03-04 15:52:42 | INFO     | src.api.routes | POST /summarize | engine=seq2seq | output_len=324 chars | summary_preview='MB Bank vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế đạt 11024 tỷ đ...'
+2026-03-04 15:53:39 | INFO     | src.api.routes | POST /summarize | engine=extractive | input_len=921 chars
+2026-03-04 15:53:39 | INFO     | src.summarization.infer | Model switch → Extractive summarization
+2026-03-04 15:53:39 | INFO     | src.api.routes | POST /summarize | engine=extractive | output_len=324 chars | summary_preview='MB Bank vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế đạt 11024 tỷ đ...'
+2026-03-04 15:53:40 | INFO     | src.api.routes | POST /summarize | engine=extractive | input_len=921 chars
+2026-03-04 15:53:40 | INFO     | src.summarization.infer | Model switch → Extractive summarization
+2026-03-04 15:53:40 | INFO     | src.api.routes | POST /summarize | engine=extractive | output_len=324 chars | summary_preview='MB Bank vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế đạt 11024 tỷ đ...'
+2026-03-04 15:53:55 | INFO     | src.api.routes | POST /summarize | engine=seq2seq | input_len=921 chars
+2026-03-04 15:53:55 | INFO     | src.summarization.infer | Model switch → Seq2Seq BiLSTM + Bahdanau Attention
+2026-03-04 15:53:55 | INFO     | src.summarization.infer | Seq2Seq produced degenerate output.
+2026-03-04 15:53:55 | WARNING  | src.summarization.infer | Seq2Seq produced degenerate output; falling back to extractive.
+2026-03-04 15:53:55 | INFO     | src.api.routes | POST /summarize | engine=seq2seq | output_len=324 chars | summary_preview='MB Bank vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế đạt 11024 tỷ đ...'
+2026-03-04 15:54:08 | INFO     | src.api.routes | POST /summarize | engine=vit5 | input_len=921 chars
+2026-03-04 15:54:11 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (150 chars)
+2026-03-04 15:54:11 | INFO     | src.api.routes | POST /summarize | engine=vit5 | output_len=150 chars | summary_preview='Ngân hàng TMCP Quân đội ( MB Bank ) vừa công bố kết quả kinh doanh quý với lợi n...'
