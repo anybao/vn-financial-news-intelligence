@@ -10,3 +10,66 @@
 2026-03-04 11:12:59 | INFO     | src.api.routes | POST /summarize | input_len=1173 chars
 2026-03-04 11:13:00 | INFO     | src.summarization.infer | Seq2Seq model produced degenerate output; falling back to extractive summarization.
 2026-03-04 11:13:00 | INFO     | src.api.routes | POST /summarize | output_len=593 chars | summary_preview='VN-Index ít chịu tác động trực tiếp hơn các chỉ số chứng khoán toàn cầu khi xung...'
+2026-03-04 11:17:44 | INFO     | src.summarization.train | Initializing Summarization Module (Pre-Main)...
+2026-03-04 11:17:48 | INFO     | src.summarization.infer | Loaded model config from models/summarizer/config.json
+2026-03-04 11:17:48 | INFO     | src.summarization.infer | Loaded tokenizer from models/summarizer
+2026-03-04 11:17:49 | INFO     | src.summarization.infer | Successfully loaded fine-tuned summarizer model from models/summarizer/summarizer.pt
+2026-03-04 11:17:53 | INFO     | src.api.routes | Loaded SentimentModel from MLflow Registry (Production)
+2026-03-04 11:17:56 | INFO     | src.api.routes | Loaded NERModel from MLflow Registry (Production)
+2026-03-04 11:19:12 | INFO     | src.api.routes | POST /summarize | input_len=1173 chars
+2026-03-04 11:19:12 | INFO     | src.summarization.infer | Seq2Seq model produced degenerate output; falling back to extractive summarization.
+2026-03-04 11:19:12 | INFO     | src.api.routes | POST /summarize | output_len=464 chars | summary_preview='VN-Index ít chịu tác động trực tiếp hơn các chỉ số chứng khoán toàn cầu khi xung...'
+2026-03-04 11:27:17 | INFO     | src.summarization.train | Initializing Summarization Module (Pre-Main)...
+2026-03-04 11:27:20 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/VietAI/vit5-base-vietnews-summarization/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-04 11:27:20 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/VietAI/vit5-base-vietnews-summarization/a54febd011c0a39ce49ceacd9225e63ef3a73ad3/config.json "HTTP/1.1 200 OK"
+2026-03-04 11:27:20 | INFO     | httpx | HTTP Request: GET https://huggingface.co/api/resolve-cache/models/VietAI/vit5-base-vietnews-summarization/a54febd011c0a39ce49ceacd9225e63ef3a73ad3/config.json "HTTP/1.1 200 OK"
+2026-03-04 11:27:20 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/VietAI/vit5-base-vietnews-summarization/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-04 11:27:20 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/VietAI/vit5-base-vietnews-summarization/a54febd011c0a39ce49ceacd9225e63ef3a73ad3/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-03-04 11:27:20 | INFO     | httpx | HTTP Request: GET https://huggingface.co/api/resolve-cache/models/VietAI/vit5-base-vietnews-summarization/a54febd011c0a39ce49ceacd9225e63ef3a73ad3/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-03-04 11:27:20 | INFO     | httpx | HTTP Request: GET https://huggingface.co/api/models/VietAI/vit5-base-vietnews-summarization/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-03-04 11:27:21 | INFO     | httpx | HTTP Request: GET https://huggingface.co/api/models/VietAI/vit5-base-vietnews-summarization/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-03-04 11:27:21 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/VietAI/vit5-base-vietnews-summarization/resolve/main/spiece.model "HTTP/1.1 302 Found"
+2026-03-04 11:27:21 | INFO     | httpx | HTTP Request: GET https://huggingface.co/api/models/VietAI/vit5-base-vietnews-summarization/xet-read-token/a54febd011c0a39ce49ceacd9225e63ef3a73ad3 "HTTP/1.1 200 OK"
+2026-03-04 11:27:23 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/VietAI/vit5-base-vietnews-summarization/resolve/main/tokenizer.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-04 11:27:23 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/VietAI/vit5-base-vietnews-summarization/a54febd011c0a39ce49ceacd9225e63ef3a73ad3/tokenizer.json "HTTP/1.1 200 OK"
+2026-03-04 11:27:23 | INFO     | httpx | HTTP Request: GET https://huggingface.co/api/resolve-cache/models/VietAI/vit5-base-vietnews-summarization/a54febd011c0a39ce49ceacd9225e63ef3a73ad3/tokenizer.json "HTTP/1.1 200 OK"
+2026-03-04 11:27:24 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/VietAI/vit5-base-vietnews-summarization/resolve/main/added_tokens.json "HTTP/1.1 404 Not Found"
+2026-03-04 11:27:24 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/VietAI/vit5-base-vietnews-summarization/resolve/main/special_tokens_map.json "HTTP/1.1 307 Temporary Redirect"
+2026-03-04 11:27:24 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/VietAI/vit5-base-vietnews-summarization/a54febd011c0a39ce49ceacd9225e63ef3a73ad3/special_tokens_map.json "HTTP/1.1 200 OK"
+2026-03-04 11:27:24 | INFO     | httpx | HTTP Request: GET https://huggingface.co/api/resolve-cache/models/VietAI/vit5-base-vietnews-summarization/a54febd011c0a39ce49ceacd9225e63ef3a73ad3/special_tokens_map.json "HTTP/1.1 200 OK"
+2026-03-04 11:27:24 | INFO     | httpx | HTTP Request: HEAD https://huggingface.co/VietAI/vit5-base-vietnews-summarization/resolve/main/chat_template.jinja "HTTP/1.1 404 Not Found"
+2026-03-04 11:27:25 | WARNING  | src.summarization.infer | Could not load ViT5 model (VietAI/vit5-base-vietnews-summarization): 0. Will use extractive summarization only.
+2026-03-04 11:27:25 | INFO     | src.summarization.infer | Loaded Seq2Seq config from models/summarizer/config.json
+2026-03-04 11:27:25 | INFO     | src.summarization.infer | Loaded Seq2Seq tokenizer from models/summarizer
+2026-03-04 11:27:26 | INFO     | src.summarization.infer | Loaded Seq2Seq weights from models/summarizer/summarizer.pt
+2026-03-04 11:27:30 | INFO     | src.api.routes | Loaded SentimentModel from MLflow Registry (Production)
+2026-03-04 11:27:32 | INFO     | src.api.routes | Loaded NERModel from MLflow Registry (Production)
+2026-03-04 11:30:49 | INFO     | src.summarization.train | Initializing Summarization Module (Pre-Main)...
+2026-03-04 11:30:55 | INFO     | src.summarization.infer | Loaded ViT5 abstractive model: VietAI/vit5-base-vietnews-summarization
+2026-03-04 11:30:55 | INFO     | src.summarization.infer | Loaded Seq2Seq config from models/summarizer/config.json
+2026-03-04 11:30:55 | INFO     | src.summarization.infer | Loaded Seq2Seq tokenizer from models/summarizer
+2026-03-04 11:30:56 | INFO     | src.summarization.infer | Loaded Seq2Seq weights from models/summarizer/summarizer.pt
+2026-03-04 11:31:00 | INFO     | src.api.routes | Loaded SentimentModel from MLflow Registry (Production)
+2026-03-04 11:31:03 | INFO     | src.api.routes | Loaded NERModel from MLflow Registry (Production)
+2026-03-04 11:31:29 | INFO     | src.api.routes | POST /summarize | input_len=599 chars
+2026-03-04 11:31:31 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (156 chars)
+2026-03-04 11:31:31 | INFO     | src.api.routes | POST /summarize | output_len=156 chars | summary_preview='Thông tin chính sách thuế mới được công bố khiến VN-Index giảm hơn 15 điểm , tha...'
+2026-03-04 11:32:22 | INFO     | src.api.routes | POST /summarize | input_len=599 chars
+2026-03-04 11:32:24 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (156 chars)
+2026-03-04 11:32:24 | INFO     | src.api.routes | POST /summarize | output_len=156 chars | summary_preview='Thông tin chính sách thuế mới được công bố khiến VN-Index giảm hơn 15 điểm , tha...'
+2026-03-04 11:32:28 | INFO     | src.api.routes | POST /summarize | input_len=599 chars
+2026-03-04 11:32:30 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (156 chars)
+2026-03-04 11:32:30 | INFO     | src.api.routes | POST /summarize | output_len=156 chars | summary_preview='Thông tin chính sách thuế mới được công bố khiến VN-Index giảm hơn 15 điểm , tha...'
+2026-03-04 12:03:05 | INFO     | src.api.routes | POST /summarize | input_len=1173 chars
+2026-03-04 12:03:08 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (178 chars)
+2026-03-04 12:03:08 | INFO     | src.api.routes | POST /summarize | output_len=178 chars | summary_preview='Việc Mỹ và Israel mở chiến dịch không kích Iran được nhận định là rủi ro ngắn hạ...'
+2026-03-04 12:03:44 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (122 chars)
+2026-03-04 12:03:47 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (99 chars)
+2026-03-04 12:03:50 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (148 chars)
+2026-03-04 12:03:52 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (185 chars)
+2026-03-04 12:03:55 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (150 chars)
+2026-03-04 12:03:57 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (122 chars)
+2026-03-04 12:03:59 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (115 chars)
+2026-03-04 12:04:02 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (150 chars)
+2026-03-04 12:04:05 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (120 chars)
+2026-03-04 12:04:07 | INFO     | src.summarization.infer | ViT5 abstractive summary generated (146 chars)
