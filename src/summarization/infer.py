@@ -198,12 +198,41 @@ class SummarizerInference:
         self.SOS_IDX = self._seq2seq_tokenizer.cls_token_id or self._seq2seq_tokenizer.bos_token_id or 0
         self.EOS_IDX = self._seq2seq_tokenizer.sep_token_id or self._seq2seq_tokenizer.eos_token_id or 2
 
+    # ── Supported model names ─────────────────────────────────────────────
+    MODELS = ("vit5", "seq2seq", "extractive")
+
     # ── Public API ────────────────────────────────────────────────────────
 
-    def summarize(self, text: str, max_len: int = 256) -> str:
-        """Generate a summary. Pipeline: ViT5 (abstractive) → extractive fallback."""
+    def summarize(self, text: str, max_len: int = 256, model: str = "vit5") -> str:
+        """Generate a summary using the selected model.
+
+        Args:
+            text:    Input article text.
+            max_len: Maximum output length (tokens for abstractive, sentences for extractive).
+            model:   One of ``'vit5'`` (default), ``'seq2seq'``, or ``'extractive'``.
+                     Falls back to extractive if the chosen model fails.
+
+        Returns:
+            Generated summary string.
+        """
+        model = model.lower().strip()
         text = _clean_html_entities(text)
 
+        # ── Route to selected model ───────────────────────────────────────
+        if model == "seq2seq":
+            logger.info("Model switch → Seq2Seq BiLSTM + Bahdanau Attention")
+            summary = self.summarize_seq2seq(text, max_len=max_len)
+            if summary:
+                logger.info(f"Seq2Seq summary generated ({len(summary)} chars)")
+                return summary
+            logger.warning("Seq2Seq produced degenerate output; falling back to extractive.")
+            return _extractive_summarize(text)
+
+        if model == "extractive":
+            logger.info("Model switch → Extractive summarization")
+            return _extractive_summarize(text)
+
+        # Default: model == "vit5"
         # 1. Try ViT5 abstractive summarization
         if self._vit5_model is not None:
             try:
@@ -282,5 +311,9 @@ if __name__ == "__main__":
     test = ("Hòa Phát vừa công bố kết quả kinh doanh quý với lợi nhuận sau thuế "
             "đạt 2940 tỷ đồng, tăng 30% so với cùng kỳ năm trước. "
             "Doanh thu thuần đạt 21165 tỷ đồng, vượt 21% so với kế hoạch.")
-    print("Abstractive:", summarizer.summarize(test))
-    print("Seq2Seq:", summarizer.summarize_seq2seq(test))
+    print("=== ViT5 (default) ===")
+    print(summarizer.summarize(test, model="vit5"))
+    print("\n=== Seq2Seq + Attention ===")
+    print(summarizer.summarize(test, model="seq2seq"))
+    print("\n=== Extractive ===")
+    print(summarizer.summarize(test, model="extractive"))

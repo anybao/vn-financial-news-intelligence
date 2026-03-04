@@ -131,18 +131,41 @@ summarizer = _load_summarizer()
 sentiment_predictor = _load_sentiment_predictor()
 ner_predictor = _load_ner_predictor()
 
-@router.post("/summarize", response_model=SummaryResponse)
+@router.post(
+    "/summarize",
+    response_model=SummaryResponse,
+    summary="Summarize text",
+    description=(
+        "Generate a summary of the input Vietnamese financial news article.\n\n"
+        "**Models available:**\n\n"
+        "| Model | Type | Architecture | Quality | Speed |\n"
+        "|-------|------|-------------|---------|-------|\n"
+        "| `vit5` | Abstractive | VietAI/vit5-base-vietnews-summarization (T5) | ★★★★★ | ~2s |\n"
+        "| `seq2seq` | Abstractive | BiLSTM + Bahdanau Attention + Beam Search | ★★☆☆☆ | ~0.5s |\n"
+        "| `extractive` | Extractive | TF + Position + Length + Data scoring | ★★★☆☆ | <0.1s |\n\n"
+        "All abstractive models automatically fall back to extractive if they fail or produce degenerate output."
+    ),
+    response_description="The generated summary and the model that produced it.",
+    tags=["Summarization"],
+)
 def summarize_text(request: ArticleRequest):
     try:
-        logger.info(f"POST /summarize | input_len={len(request.text)} chars")
-        summary = summarizer.summarize(request.text)
-        logger.info(f"POST /summarize | output_len={len(summary)} chars | summary_preview='{summary[:80]}...'")
-        return SummaryResponse(summary=summary)
+        model_name = (request.model.value if request.model else "vit5")
+        logger.info(f"POST /summarize | model={model_name} | input_len={len(request.text)} chars")
+        summary = summarizer.summarize(request.text, model=model_name)
+        logger.info(f"POST /summarize | model={model_name} | output_len={len(summary)} chars | summary_preview='{summary[:80]}...'")
+        return SummaryResponse(summary=summary, model=model_name)
     except Exception as e:
         logger.error(f"POST /summarize | ERROR: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/sentiment", response_model=SentimentResponse)
+@router.post(
+    "/sentiment",
+    response_model=SentimentResponse,
+    summary="Analyze sentiment",
+    description="Classify the sentiment of a Vietnamese financial news article as Positive, Neutral, or Negative using PhoBERT.",
+    tags=["NLP Analysis"],
+)
 def analyze_sentiment(request: ArticleRequest):
     try:
         result = sentiment_predictor.predict(request.text)
@@ -150,7 +173,13 @@ def analyze_sentiment(request: ArticleRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/ner", response_model=NERResponse)
+@router.post(
+    "/ner",
+    response_model=NERResponse,
+    summary="Extract stock entities",
+    description="Extract VN30 stock ticker symbols from the text using hybrid NER (rule-based dictionary + PhoBERT token classification).",
+    tags=["NLP Analysis"],
+)
 def map_stocks(request: ArticleRequest):
     try:
         result = ner_predictor.extract_stocks(request.text)
@@ -158,7 +187,19 @@ def map_stocks(request: ArticleRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/predict_event", response_model=EventPredictionResponse)
+@router.post(
+    "/predict_event",
+    response_model=EventPredictionResponse,
+    summary="Full NLP pipeline",
+    description=(
+        "Run all three NLP tasks simultaneously on the input article:\n\n"
+        "1. **Summarization** — generate a concise summary\n"
+        "2. **Sentiment analysis** — classify as Positive / Neutral / Negative\n"
+        "3. **NER** — extract VN30 stock tickers mentioned\n\n"
+        "Returns a unified response with summary, sentiment, stocks, and duplicate flag."
+    ),
+    tags=["NLP Analysis"],
+)
 def predict_financial_event(request: ArticleRequest):
     """Integrates Summarization, Sentiment, and NER simultaneously."""
     try:
